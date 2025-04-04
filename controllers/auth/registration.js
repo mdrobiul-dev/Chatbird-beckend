@@ -20,11 +20,17 @@ const registration = async (req, res) => {
     if(!validateEmail(email)) {
         return res.status(400).send("Email is invalid")
     }
+
+    const existingUser = await userSchema.findOne({email})
+
     if(existingUser) {
         return res.status(400).send("Email is already in use")
     }
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+
     const userData = new userSchema({
-        fullName, email, password, avatar
+        fullName, email, password, avatar,otp
     })
 
    await userData.save()

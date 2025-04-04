@@ -19,7 +19,17 @@ const userSchema = new Schema({
       },
       avatar : {
         type : String,
-        default : "",
+      },
+      isVarified : {
+        type : Boolean,
+        default : false,
+      },
+      otp : {
+        type : String,
+        default : null
+      },
+      otpExpiredAt : {
+        type :Date
       }
 });
 

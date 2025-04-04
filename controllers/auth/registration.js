@@ -1,5 +1,4 @@
 const validateEmail = require("../../helpers/emailValidator")
-const emailValidator = require("../../helpers/emailValidator")
 const userSchema = require("../../modal/userSchema")
 
 const registration = async (req, res) => {
@@ -21,14 +20,9 @@ const registration = async (req, res) => {
     if(!validateEmail(email)) {
         return res.status(400).send("Email is invalid")
     }
-
-    const existingUser = await userSchema.findOne({email})
-
-
     if(existingUser) {
         return res.status(400).send("Email is already in use")
     }
-
     const userData = new userSchema({
         fullName, email, password, avatar
     })

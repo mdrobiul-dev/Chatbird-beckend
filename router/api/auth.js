@@ -5,6 +5,6 @@ const authRout = express.Router()
 
 authRout.post("/registration", registration)
 
-authRout.get("/login", login)
+authRout.post("/login", login)
 
 module.exports = authRout

@@ -30,7 +30,7 @@ const userSchema = new Schema({
       },
       otpExpiredAt : {
         type :Date
-      }
+      },
 });
 
 userSchema.pre("save", async function (next) {

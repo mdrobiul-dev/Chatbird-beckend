@@ -1,6 +1,8 @@
-const nodemailer = require("nodemailer");
+const sendingEmail = require("../../helpers/emailSend");
 const validateEmail = require("../../helpers/emailValidator");
+const emailTemplates = require("../../helpers/temPlates");
 const userSchema = require("../../modal/userSchema");
+const nodemailer = require("nodemailer");
 
 const registration = async (req, res) => {
   const { fullName, email, password, avatar } = req.body;
@@ -11,7 +13,7 @@ const registration = async (req, res) => {
   if (!password) return res.status(400).send("password is required");
   if (!validateEmail(email)) return res.status(400).send("Email is invalid");
 
-  try {
+  
     const existingUser = await userSchema.findOne({ email });
     if (existingUser) return res.status(400).send("Email is already in use");
 
@@ -23,32 +25,11 @@ const registration = async (req, res) => {
     const userData = new userSchema({ fullName, email, password, avatar, otp , otpExpiredAt });
     await userData.save();
 
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "robiulhassanrobi33@gmail.com",
-        pass: "pegg iyln xikz fhiy", // Make sure this is a valid app password
-      },
-    });
+    sendingEmail(email, "variefy your email", emailTemplates, otp, fullName)
 
-    // Send email
-    const mailOptions = {
-      from: '"MyApp Support" <robiulhassanrobi33@gmail.com>', // clean & professional
-      to: email,
-      subject: "Email Verification",
-      html: `<p>Hello ${fullName},</p><p>Your OTP for email verification is: <strong>${otp}</strong></p>`,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
 
     return res.status(200).send("Registration successful. OTP sent to your email.");
-  } catch (error) {
-    console.error("Error in registration:", error);
-    return res.status(500).send("Something went wrong. Please try again later.");
-  }
+  
 };
 
 module.exports = registration;

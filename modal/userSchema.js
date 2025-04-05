@@ -30,8 +30,12 @@ const userSchema = new Schema({
       },
       otpExpiredAt : {
         type :Date
-      },
-});
+      },  
+},
+{
+  timestamps: true,
+}
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

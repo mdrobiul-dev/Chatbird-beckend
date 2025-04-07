@@ -2,7 +2,6 @@ const sendingEmail = require("../../helpers/emailSend");
 const validateEmail = require("../../helpers/emailValidator");
 const emailTemplates = require("../../helpers/temPlates");
 const userSchema = require("../../modal/userSchema");
-const nodemailer = require("nodemailer");
 
 const registration = async (req, res) => {
   const { fullName, email, password, avatar } = req.body;
@@ -31,5 +30,7 @@ const registration = async (req, res) => {
     return res.status(200).send("Registration successful. OTP sent to your email.");
   
 };
+
+
 
 module.exports = registration;

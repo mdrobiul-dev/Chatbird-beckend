@@ -7,16 +7,16 @@ const sendingEmail = async (email, subject, template, otp, fullName) => {
           secure: true,
           auth: {
             user: "robiulhassanrobi33@gmail.com",
-            pass: "pegg iyln xikz fhiy", // Make sure this is a valid app password
+            pass: "pegg iyln xikz fhiy", 
           },
         });
     
         // Send email
         const mailOptions = {
-          from: '"Chatweb Support" <robiulhassanrobi33@gmail.com>', // clean & professional
+          from: '"Chatweb Support" <robiulhassanrobi33@gmail.com>', 
           to: email,
           subject: subject,
-          html: template(otp , fullName),
+          html: template(otp , fullName || ""),
         };
     
         const info = await transporter.sendMail(mailOptions);

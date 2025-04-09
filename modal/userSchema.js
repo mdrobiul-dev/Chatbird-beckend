@@ -19,6 +19,7 @@ const userSchema = new Schema({
       },
       avatar : {
         type : String,
+        default : ""
       },
       isVarified : {
         type : Boolean,
@@ -30,7 +31,13 @@ const userSchema = new Schema({
       },
       otpExpiredAt : {
         type :Date
-      },  
+      },
+      randomString : {
+        type : String
+      },
+      linkExpiredAt : {
+        type : Date
+      }  
 },
 {
   timestamps: true,

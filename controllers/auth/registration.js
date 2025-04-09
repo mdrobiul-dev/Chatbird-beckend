@@ -3,6 +3,8 @@ const validateEmail = require("../../helpers/emailValidator");
 const emailTemplates = require("../../helpers/temPlates");
 const userSchema = require("../../modal/userSchema");
 
+//registration function
+
 const registration = async (req, res) => {
   const { fullName, email, password, avatar } = req.body;
 

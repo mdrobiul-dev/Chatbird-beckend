@@ -9,5 +9,6 @@ authRout.post("/registration", registration)
 authRout.post("/emailvariefication", emailvariefied)
 authRout.post("/login", login)
 authRout.post("/forgetpassword", forgotPassword)
+authRout.post("/resetpassword", forgotPassword)
 
 module.exports = authRout

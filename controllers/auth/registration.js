@@ -1,6 +1,6 @@
 const sendingEmail = require("../../helpers/emailSend");
 const validateEmail = require("../../helpers/emailValidator");
-const emailTemplates = require("../../helpers/temPlates");
+const {emailTemplates} = require("../../helpers/temPlates");
 const userSchema = require("../../modal/userSchema");
 
 //registration function

@@ -31,4 +31,39 @@ const emailTemplates = (otp, fullName) => {
     `
 }
 
-module.exports = emailTemplates
+//forget password
+
+const forgetPasswordTemplate = ( resetLink) => {
+ return `
+  <div style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; margin: 0;">
+    <table style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 6px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <tr>
+        <td>
+          <h2 style="color: #333333; text-align: center;">Reset Your Password</h2>
+          <p style="font-size: 16px; color: #555555;">
+            Hi there,
+          </p>
+          <p style="font-size: 16px; color: #555555;">
+            We received a request to reset your password for your ChatBird account. Click the button below to choose a new password.
+          </p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetLink}" style="background-color: #4a90e2; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-size: 16px;">
+              Reset Password
+            </a>
+          </div>
+          <p style="font-size: 14px; color: #888888;">
+            If you didn't request this, you can safely ignore this email.
+          </p>
+          <p style="font-size: 14px; color: #888888;">
+            This link will expire in 1 hour for security reasons.
+          </p>
+          <p style="font-size: 14px; color: #888888;">
+            — The ChatBird Team
+          </p>
+        </td>
+      </tr>
+    </table>
+  </div>`
+}
+
+module.exports = {emailTemplates, forgetPasswordTemplate}

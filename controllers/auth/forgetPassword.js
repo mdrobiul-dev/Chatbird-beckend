@@ -17,14 +17,12 @@ const forgotPassword = async (req, res) => {
     // Here you'd normally initiate password reset logic (e.g., send reset link)
 
     const randomString = generateRandomString(25)
-
-    const resetLink = `http://localhost:8000/api/v1/auth/resetpassword/${randomString}`;
  
     existingUser.randomString = randomString;
     existingUser.linkExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
     await existingUser.save()
 
-    sendingEmail(email, "Reset Your password", () => forgetPasswordTemplate(resetLink))
+    sendingEmail(email, "Reset Your password", forgetPasswordTemplate, randomString)
 
     res.status(200).json({ message: "Password reset instructions sent to email" });
 };

@@ -14,7 +14,7 @@ const forgotPassword = async (req, res) => {
 
     if(!existingUser) return res.status(400).send("invalid credential")
 
-    // Here you'd normally initiate password reset logic (e.g., send reset link)
+    // initiate password reset logic 
 
     const randomString = generateRandomString(25)
  

@@ -14,7 +14,12 @@ const resetPassword = async (req, res) => {
 
     if(existingUser.randomString !== randomString || existingUser.linkExpiredAt < Date.now()) return res.status(400).send("invalid credential")
 
-     existingUser.password = newPassword 
+     existingUser.password = newPassword ;
+     existingUser.randomString = null;
+     existingUser.linkExpiredAt = null;
+     await existingUser.save();
+
+     res.status(200).send("password reset succesfull")
 }
 
 module.exports = resetPassword

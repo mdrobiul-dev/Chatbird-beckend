@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const sendingEmail = async (email, subject, template, random, fullName) => {
+const sendingEmail = async (email, subject, template, ...templateArg) => {
      // Setup nodemailer
         const transporter = nodemailer.createTransport({
           host: "smtp.gmail.com",
@@ -16,7 +16,7 @@ const sendingEmail = async (email, subject, template, random, fullName) => {
           from: '"Chatweb Support" <robiulhassanrobi33@gmail.com>', 
           to: email,
           subject: subject,
-          html: template(random , fullName || ""),
+          html: template(...templateArg),
         };
     
         const info = await transporter.sendMail(mailOptions);

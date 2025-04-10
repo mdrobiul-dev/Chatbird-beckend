@@ -22,7 +22,7 @@ const forgotPassword = async (req, res) => {
     existingUser.linkExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
     await existingUser.save()
 
-    sendingEmail(email, "Reset Your password", forgetPasswordTemplate, randomString)
+    sendingEmail(email, "Reset Your password", forgetPasswordTemplate, randomString, email )
 
     res.status(200).json({ message: "Password reset instructions sent to email" });
 };

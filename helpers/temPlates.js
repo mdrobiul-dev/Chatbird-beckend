@@ -1,4 +1,4 @@
-const emailTemplates = (random, fullName) => {
+const emailTemplates = (otp, fullName) => {
     return  `
       <div style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f2f2f2;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f2f2f2; padding: 20px;">
@@ -14,7 +14,7 @@ const emailTemplates = (random, fullName) => {
               <td style="color: #555555; font-size: 16px; line-height: 1.5;">
                 <p>Hi <strong>${fullName}</strong>,</p>
                 <p>Thank you for registering. Please use the OTP below to verify your email address:</p>
-                <p style="font-size: 24px; font-weight: bold; color: #4CAF50; letter-spacing: 4px;">${random}</p>
+                <p style="font-size: 24px; font-weight: bold; color: #4CAF50; letter-spacing: 4px;">${otp}</p>
                 <p>This code will expire in 5 minutes. If you didn’t request this, you can safely ignore this email.</p>
               </td>
             </tr>
@@ -33,7 +33,7 @@ const emailTemplates = (random, fullName) => {
 
 //forget password
 
-const forgetPasswordTemplate = (email, randomString) => {
+const forgetPasswordTemplate = (randomString, email) => {
  return `
   <div style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; margin: 0;">
     <table style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 6px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
@@ -47,7 +47,7 @@ const forgetPasswordTemplate = (email, randomString) => {
             We received a request to reset your password for your ChatBird account. Click the button below to choose a new password.
           </p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.BASE_API}/api/v1/auth/resetpassword${randomString}?email=${email}" style="background-color: #4a90e2; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-size: 16px;">
+            <a href="${process.env.BASE_API}/api/v1/auth/resetpassword/${randomString}?email=${email}" style="background-color: #4a90e2; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-size: 16px;">
               Reset Password
             </a>
           </div>

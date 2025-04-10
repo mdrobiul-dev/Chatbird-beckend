@@ -1,6 +1,7 @@
 const userSchema = require("../../modal/userSchema");
 
 const resetPassword = async (req, res) => {
+try {
     const randomString = req.params.randomString;
     const email = req.query.email;
     const { password} = req.body;
@@ -20,6 +21,9 @@ const resetPassword = async (req, res) => {
      await existingUser.save();
 
      res.status(200).send("password reset succesfull")
+   } catch (error) {
+    res.status(500).send("Server error!")
+}
 }
 
 module.exports = resetPassword

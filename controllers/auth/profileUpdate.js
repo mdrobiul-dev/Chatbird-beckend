@@ -6,11 +6,11 @@ const profileUpdate = async (req, res) => {
 
     const updateFileds = {};
 
-    if(fullName) updateFileds.fullName = fullName;
+    if(fullName) updateFileds.fullName = fullName.trim();
     if(password) updateFileds.password = password;
     if(avatar) updateFileds.avatar = avatar;
 
-    const existngUser = await userSchema.findByIdAndUpdate("", updateFileds, {new : true})
+    const existngUser = await userSchema.findByIdAndUpdate("67f7b116500343b6def6ed71", updateFileds, {new : true})
 
     res.status(200).send(updateFileds)
 }

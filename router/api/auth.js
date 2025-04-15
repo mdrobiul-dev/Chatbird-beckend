@@ -5,6 +5,8 @@ const emailvariefied = require('../../controllers/auth/emailVariefied');
 const { forgotPassword } = require('../../controllers/auth/forgetPassword');
 const resetPassword = require('../../controllers/auth/resetPassword');
 const { profileUpdate } = require('../../controllers/auth/profileUpdate');
+const multer  = require('multer');
+const upload = require('../../helpers/multer');
 const authRout = express.Router()
 
 authRout.post("/registration", registration)
@@ -12,6 +14,6 @@ authRout.post("/emailvariefication", emailvariefied)
 authRout.post("/login", login)
 authRout.post("/forgetpassword", forgotPassword)
 authRout.post("/resetpassword/:randomString", resetPassword)
-authRout.post("/profileupdate", profileUpdate)
+authRout.post("/profileupdate", upload.single('avatar'), profileUpdate)
 
 module.exports = authRout

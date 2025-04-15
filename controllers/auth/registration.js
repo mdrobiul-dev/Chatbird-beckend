@@ -3,7 +3,7 @@ const validateEmail = require("../../helpers/emailValidator");
 const {emailTemplates} = require("../../helpers/temPlates");
 const userSchema = require("../../modal/userSchema");
 
-//registration function
+//registration function 
 
 const registration = async (req, res) => {
 
@@ -11,6 +11,7 @@ const registration = async (req, res) => {
     const { fullName, email, password, avatar } = req.body;
 
     // Basic validation
+
     if (!fullName) return res.status(400).send("fullName is required");
     if (!email) return res.status(400).send("email is required");
     if (!password) return res.status(400).send("password is required");

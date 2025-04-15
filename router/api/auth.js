@@ -7,6 +7,7 @@ const resetPassword = require('../../controllers/auth/resetPassword');
 const { profileUpdate } = require('../../controllers/auth/profileUpdate');
 const multer  = require('multer');
 const upload = require('../../helpers/multer');
+
 const authRout = express.Router()
 
 authRout.post("/registration", registration)

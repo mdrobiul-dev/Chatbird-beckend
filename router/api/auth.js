@@ -6,6 +6,7 @@ const { forgotPassword } = require('../../controllers/auth/forgetPassword');
 const resetPassword = require('../../controllers/auth/resetPassword');
 const { profileUpdate } = require('../../controllers/auth/profileUpdate');
 const upload = require('../../helpers/multer');
+const validUser = require('../../middlewears/authMiddlewear');
 
 const authRout = express.Router()
 
@@ -14,6 +15,6 @@ authRout.post("/emailvariefication", emailvariefied)
 authRout.post("/login", login)
 authRout.post("/forgetpassword", forgotPassword)
 authRout.post("/resetpassword/:randomString", resetPassword)
-authRout.post("/profileupdate", upload.single('avatar'), profileUpdate)
+authRout.post("/profileupdate", validUser, upload.single('avatar'), profileUpdate)
 
 module.exports = authRout

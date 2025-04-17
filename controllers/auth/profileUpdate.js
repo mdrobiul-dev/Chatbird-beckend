@@ -13,6 +13,8 @@ const profileUpdate = async (req, res) => {
         const result = await cloudinary.uploader.upload(req.file.path, {
           folder: 'avatars', 
         });
+
+        console.log(result)
   
         fs.unlinkSync(req.file.path);
   

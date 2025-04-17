@@ -37,7 +37,10 @@ const userSchema = new Schema({
       },
       linkExpiredAt : {
         type : Date
-      }  
+      },
+      avatarPublicId : {
+        type : String
+      },  
 },
 {
   timestamps: true,

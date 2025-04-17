@@ -10,10 +10,14 @@ const profileUpdate = async (req, res) => {
     if (password) updateFields.password = password;
 
     // 👇 use req.user.id from validUser middleware
-    const userId = req.user.id;
-
+    const userId = req.user._id;
+     
     // 🔍 fetch current user from DB
     const user = await userSchema.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     if (req.file) {
       // 🗑️ delete old image from Cloudinary

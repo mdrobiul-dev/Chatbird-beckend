@@ -5,8 +5,8 @@ const emailvariefied = require('../../controllers/auth/emailVariefied');
 const { forgotPassword } = require('../../controllers/auth/forgetPassword');
 const resetPassword = require('../../controllers/auth/resetPassword');
 const { profileUpdate } = require('../../controllers/auth/profileUpdate');
-const upload = require('../../helpers/multer');
 const validUser = require('../../middlewears/authMiddlewear');
+const upload = require('../../middlewears/multer');
 
 const authRout = express.Router()
 

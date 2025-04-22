@@ -1,6 +1,6 @@
 const userSchema = require("../../modal/userSchema");
 
-//email variefied function
+//email variefied functi
 
 const emailvariefied  = async (req, res) => {
 

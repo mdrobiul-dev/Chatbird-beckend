@@ -1,10 +1,6 @@
 const express = require('express');
-const registration = require('../../controllers/auth/registration');
-const login = require('../../controllers/auth/login');
-const emailvariefied = require('../../controllers/auth/emailVariefied');
-const { forgotPassword } = require('../../controllers/auth/forgetPassword');
-const resetPassword = require('../../controllers/auth/resetPassword');
-const { profileUpdate } = require('../../controllers/auth/profileUpdate');
+const { registration, emailvariefied, forgotPassword, resetPassword, profileUpdate, login } = require('../../controllers/authcontroller');
+
 const validUser = require('../../middlewears/authMiddlewear');
 const upload = require('../../middlewears/multer');
 

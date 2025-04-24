@@ -1,3 +1,4 @@
+const conversationSchema = require("../modal/conversationSchema")
 const messageSchema = require("../modal/messageSchema")
 
 const messageSend = async (req, res) => {
@@ -17,12 +18,22 @@ const messageSend = async (req, res) => {
             return res.status(400).send({error : "conversationId is required"})
         }
 
+        const existingConversation = await conversationSchema.findById({_id : conversationId})
+
+        if(!existingConversation) {
+            return res.status.send({error : "no conversation"})
+        }
+
         const message = new messageSchema({
             sender: req.user._id,
             reciever : reciverId,
             content,
-            conversation : conversationId,
+            conversation : existingConversation._id,
         })
+
+       await message.save()
+
+       await conversationSchema.findByIdAndUpdate(existingConversation._id, {lastmessage : message})
 
     return res.send("hello world")
     } catch (error) {

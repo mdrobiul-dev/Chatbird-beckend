@@ -8,6 +8,6 @@ const chatRoute = express.Router()
 
 chatRoute.post("/createconversation", validUser , createConverstion)
 chatRoute.get("/conversationlist", validUser, conversationList)
-chatRoute.post("/send", validUser, messageSend)
+chatRoute.post("/sendmessage", validUser, messageSend)
 
 module.exports = chatRoute

@@ -35,7 +35,9 @@ const messageSend = async (req, res) => {
 
        await conversationSchema.findByIdAndUpdate(existingConversation._id, {lastmessage : message})
 
-    return res.send("hello world")
+       global.io.emmit("new_message", {message , conversationId : existingConversation._id})
+
+    return res.send(message)
     } catch (error) {
         res.status(500).send("server error")
     }

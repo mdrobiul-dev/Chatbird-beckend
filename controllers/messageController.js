@@ -35,12 +35,27 @@ const messageSend = async (req, res) => {
 
        await conversationSchema.findByIdAndUpdate(existingConversation._id, {lastmessage : message})
 
-       global.io.emmit("new_message", {message , conversationId : existingConversation._id})
+       global.io.emit("new_message", {message , conversationId : existingConversation._id})
 
     return res.send(message)
     } catch (error) {
+        console.log(error)
         res.status(500).send("server error")
     }
 }
 
-module.exports =  { messageSend }
+const getmessage = async (req, res) => {
+   try {
+    const {conversationId} = req.params
+
+    const message = await messageSchema.find({conversation : conversationId})
+
+   return res.status(200).send({success : message})
+
+   } catch (error) {
+    console.log(error)
+      res.status(500).send({error : "server error"})
+   }
+}
+
+module.exports =  { messageSend , getmessage}

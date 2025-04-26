@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors');
 const router = require ("./router")
 const dbConnect = require('./confiq/dbConnect')
 require('dotenv').config()
@@ -7,6 +8,7 @@ const http = require('http');
 const httpserver = http.createServer(app);
 const { Server } = require("socket.io");
 app.use(express.json())
+app.use(cors());
 app.use(router)
 
 

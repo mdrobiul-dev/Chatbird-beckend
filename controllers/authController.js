@@ -6,6 +6,7 @@ const validateEmail = require("../helpers/emailValidator");
 const { emailTemplates, forgetPasswordTemplate } = require("../helpers/temPlates");
 const userSchema = require('../modal/userSchema');
 const { generateRandomString } = require('../helpers/randomeString');
+const { error } = require('console');
 
 
 
@@ -19,14 +20,14 @@ const registration = async (req, res) => {
 
     // Basic validation
 
-    if (!fullName) return res.status(400).send("fullName is required");
-    if (!email) return res.status(400).send("email is required");
-    if (!password) return res.status(400).send("password is required");
-    if (!validateEmail(email)) return res.status(400).send("Email is invalid");
+    if (!fullName) return res.status(400).send({error : "fullName is required"});
+    if (!email) return res.status(400).send({error : "email is required"});
+    if (!password) return res.status(400).send({error : "password is required"});
+    if (!validateEmail(email)) return res.status(400).send({error : "Email is invalid"});
   
     
       const existingUser = await userSchema.findOne({ email });
-      if (existingUser) return res.status(400).send("Email is already in use");
+      if (existingUser) return res.status(400).send({error : "Email is already in use"});
   
       // Generate OTP
       const otp = Math.floor(1000 + Math.random() * 9000);
@@ -39,7 +40,7 @@ const registration = async (req, res) => {
       sendingEmail(email, "variefy your email", emailTemplates, otp, fullName)
   
   
-      return res.status(200).send("Registration successful. OTP sent to your email.");
+      return res.status(200).send({success : "Registration successful. OTP sent to your email."});
   } catch (error) {
       res.status(500).send("Server error!")
   }
@@ -102,20 +103,20 @@ const emailvariefied  = async (req, res) => {
 
     const {email, otp} = req.body; 
 
-    if (!email) return res.status(400).send("email is required");
+    if (!email) return res.status(400).send({error : "email is required"});
 
-    if (!otp) return res.status(400).send("otp is required");
+    if (!otp) return res.status(400).send({error : "otp is required"});
 
 const variefiedUser  = await userSchema.findOne({email, otp, otpExpiredAt : {$gt:Date.now()}})
 
-if(!variefiedUser ) return res.status(400).send("invalid request");
+if(!variefiedUser ) return res.status(400).send({error : "invalid request"});
 
 variefiedUser.otp = null ;
 variefiedUser.otpExpiredAt = null ;
 variefiedUser.isVarified = true ;
 await variefiedUser.save() ;
 
-res.status(200).send("Registration succesfull , email variefied succesfull ")
+res.status(200).send({success : "Registration succesfull , email variefied succesfull"})
 
 }
 

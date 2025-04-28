@@ -109,7 +109,7 @@ const emailvariefied  = async (req, res) => {
 
 const variefiedUser  = await userSchema.findOne({email, otp, otpExpiredAt : {$gt:Date.now()}})
 
-if(!variefiedUser ) return res.status(400).send({error : "invalid request"});
+if(!variefiedUser ) return res.status(400).send({error : "Wrong otp / expired !"});
 
 variefiedUser.otp = null ;
 variefiedUser.otpExpiredAt = null ;
@@ -117,6 +117,41 @@ variefiedUser.isVarified = true ;
 await variefiedUser.save() ;
 
 res.status(200).send({success : "Registration succesfull , email variefied succesfull"})
+
+}
+
+//Re-Sent Otp
+
+const resentOtp = async (req, res) => {
+    try {
+      const {email} = req.body
+
+      if(!email) {
+        return res.status(400).send({error : "email is required"})
+      }
+
+      const userData = await userSchema.findOne({email});
+
+    if (!userData) {
+      return res.status(400).send({error : "No user data"})
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+
+    userData.otp = otp
+    userData.otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000)
+    await userData.save()
+
+    const fullName = userData.fullName
+
+    sendingEmail(email, "variefy your email", emailTemplates, otp, fullName)
+
+    return res.status(200).send({ message: 'OTP resent successfully' });
+
+     } catch (error) {
+       res.status(500).send({error : "server error"})
+     }
+
 
 }
 
@@ -232,4 +267,4 @@ const profileUpdate = async (req, res) => {
 
 
 
-module.exports = {registration, login, emailvariefied, forgotPassword, resetPassword, profileUpdate };
+module.exports = {registration, login, emailvariefied, forgotPassword, resetPassword, profileUpdate, resentOtp };

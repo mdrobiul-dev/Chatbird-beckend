@@ -54,27 +54,27 @@ const login = async (req, res) => {
     const {email, password} = req.body;
 
     if(!email) {
-        return res.status(400).send("email is required")
+        return res.status(400).send({error : "email is required"})
     }
 
     if(!validateEmail(email)) {
-        return res.status(400).send("Email is invalid")
+        return res.status(400).send({error : "email is not valid"})
     }
 
     if(!password) {
-        return res.status(400).send("password is required")
+        return res.status(400).send({error : "password is required"})
     }
 
     const existingUser = await userSchema.findOne({email})
   
-    if(!existingUser) return res.status(400).send("email not found")
+    if(!existingUser) return res.status(400).send({error : "email not found"})
         
-    if(!existingUser.isVarified) return res.status(400).send("email not variefied")
+    if(!existingUser.isVarified) return res.status(400).send({error : "email not variefied"})
 
     const isUserValid = await existingUser.isPasswordValid(password);
 
     if(!isUserValid) {
-        return res.status(400).send("password is incorrect")
+        return res.status(400).send({error : "password is incorrect"})
     }
 
    const acces_token = jwt.sign({

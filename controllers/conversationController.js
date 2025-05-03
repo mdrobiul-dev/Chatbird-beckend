@@ -48,7 +48,7 @@ const createConverstion = async (req, res) => {
 const conversationList = async (req, res) => {
   try {
     const conversation = await conversationSchema
-      .findOne({
+      .find({
         $or: [{ creator: req.user._id }, { participant: req.user._id }],
       })
       .populate("creator", "fullName email avatar")
@@ -60,7 +60,9 @@ const conversationList = async (req, res) => {
     }
 
     return res.status(200).send({ success: conversation });
-  } catch (error) {}
+  } catch (error) {
+      res.status(500).send("Server error!");
+  }
 };
 
 module.exports = { createConverstion, conversationList };

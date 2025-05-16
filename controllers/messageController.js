@@ -5,6 +5,7 @@ const messageSend = async (req, res) => {
     try {
 
         const {reciverId , content, conversationId} = req.body
+        
 
         if(!reciverId) {
             return res.status(400).send({error : "reciverId is required"})

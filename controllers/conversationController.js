@@ -53,7 +53,8 @@ const conversationList = async (req, res) => {
       })
       .populate("creator", "fullName email avatar")
       .populate("participant", "fullName email avatar")
-      .populate("lastmessage");
+      .populate("lastmessage").sort({ 'updatedAt': -1 })
+;
 
     if (!conversation) {
       return res.status(200).send({ error: "No conversation yet" });

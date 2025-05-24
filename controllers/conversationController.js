@@ -66,4 +66,4 @@ const conversationList = async (req, res) => {
   }
 };
 
-module.exports = { createConverstion, conversationList };   
+module.exports = { createConverstion, conversationList };     

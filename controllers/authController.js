@@ -216,7 +216,7 @@ const profileUpdate = async (req, res) => {
     const { fullName, password } = req.body;
     const updateFields = {};
 
-    if (fullName) updateFields.fullName = fullName.trim();
+    if (fullName) updateFields.fullName = fullName.trim().split(/\s+/).join(' ');
     if (password) updateFields.password = password;
 
     // 👇 use req.user.id from validUser middleware

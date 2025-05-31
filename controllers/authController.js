@@ -6,6 +6,7 @@ const validateEmail = require("../helpers/emailValidator");
 const { emailTemplates, forgetPasswordTemplate } = require("../helpers/temPlates");
 const userSchema = require('../modal/userSchema');
 const { generateRandomString } = require('../helpers/randomeString');
+const bcrypt = require('bcrypt');
 const { error } = require('console');
 
 
@@ -217,12 +218,13 @@ const profileUpdate = async (req, res) => {
     const updateFields = {};
 
     if (fullName) updateFields.fullName = fullName.trim().split(/\s+/).join(' ');
-    if (password) updateFields.password = password;
+     if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateFields.password = hashedPassword;
+    }
 
-    // 👇 use req.user.id from validUser middleware
     const userId = req.user._id;
      
-    // 🔍 fetch current user from DB
     const user = await userSchema.findById(userId);
     
     if (!user) {
@@ -230,12 +232,11 @@ const profileUpdate = async (req, res) => {
     }
 
     if (req.file) {
-      // 🗑️ delete old image from Cloudinary
+      //  delete old image from Cloudinary
       if (user.avatarPublicId) {
         await cloudinary.uploader.destroy(user.avatarPublicId);
       }
-
-      // ⬆️ upload new image
+      //  upload new image
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "avatars",
       });
@@ -246,7 +247,7 @@ const profileUpdate = async (req, res) => {
       updateFields.avatarPublicId = result.public_id;
     }
 
-    // ✏️ update user in DB
+    //  update user in DB
     const updatedUser = await userSchema.findByIdAndUpdate(
       userId,
       updateFields,

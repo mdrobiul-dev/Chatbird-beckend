@@ -47,7 +47,7 @@ const forgetPasswordTemplate = (randomString, email) => {
             We received a request to reset your password for your ChatBird account. Click the button below to choose a new password.
           </p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.BASE_API}/api/v1/auth/resetpassword/${randomString}?email=${email}" style="background-color: #4a90e2; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-size: 16px;">
+            <a href="http://localhost:5173/reset-password/${randomString}?email=${email}" style="background-color: #4a90e2; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-size: 16px;">
               Reset Password
             </a>
           </div>

@@ -24,7 +24,7 @@ global.io = io
 const activeUsers = new Map(); // userId => socketId
 
 io.on("connection", (socket) => {
-  console.log("🔌 New socket connected:", socket.id);
+  // console.log("🔌 New socket connected:", socket.id);
 
   // Join a chat room
   socket.on("join_room", (conversationId) => {

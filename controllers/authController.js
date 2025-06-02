@@ -160,14 +160,13 @@ const resentOtp = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     const  {email}  = req.body;
-
     if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+        return res.status(400).json({ error: "Email is required" });
     }
 
     const existingUser = await userSchema.findOne({email})
 
-    if(!existingUser) return res.status(400).send("invalid credential")
+    if(!existingUser) return res.status(400).send({ error :"invalid credential"})
 
     // initiate password reset logic 
 
@@ -190,12 +189,12 @@ try {
     const email = req.query.email;
     const { password} = req.body;
 
-    if(!randomString) return res.status(400).send("invalid credential")
-    if(!email) return res.status(400).send("invalid credential")
+    if(!randomString) return res.status(400).send({ error :"invalid credential"})
+    if(!email) return res.status(400).send({ error :"invalid credential"})
 
     const existingUser = await userSchema.findOne({email})
 
-    if(!existingUser) return res.status(400).send("invalid credential")
+    if(!existingUser) return res.status(400).send({ error :"invalid credential"})
 
     if(existingUser.randomString !== randomString || existingUser.linkExpiredAt < Date.now()) return res.status(400).send("invalid credential")
 
@@ -204,9 +203,9 @@ try {
      existingUser.linkExpiredAt = null;
      await existingUser.save();
 
-     res.status(200).send("password reset succesfull")
+     res.status(200).send({message : "password reset succesfull"})
    } catch (error) {
-    res.status(500).send("Server error!")
+    res.status(500).send({error : "Server error!"})
 }
 }
 

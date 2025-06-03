@@ -1,231 +1,269 @@
-const jwt = require('jsonwebtoken');
-const cloudinary = require('../confiq/cloudinary')
-const fs = require('fs');
+const jwt = require("jsonwebtoken");
+const cloudinary = require("../confiq/cloudinary");
+const fs = require("fs");
 const sendingEmail = require("../helpers/emailSend");
 const validateEmail = require("../helpers/emailValidator");
-const { emailTemplates, forgetPasswordTemplate } = require("../helpers/temPlates");
-const userSchema = require('../modal/userSchema');
-const { generateRandomString } = require('../helpers/randomeString');
-const bcrypt = require('bcrypt');
-const { error } = require('console');
+const {
+  emailTemplates,
+  forgetPasswordTemplate,
+} = require("../helpers/temPlates");
+const userSchema = require("../modal/userSchema");
+const { generateRandomString } = require("../helpers/randomeString");
+const bcrypt = require("bcrypt");
+const { error } = require("console");
 
-
-
-
-//registration function 
+//registration function
 
 const registration = async (req, res) => {
-
   try {
     const { fullName, email, password, avatar } = req.body;
 
     // Basic validation
 
-    if (!fullName) return res.status(400).send({error : "fullName is required"});
-    if (!email) return res.status(400).send({error : "email is required"});
-    if (!password) return res.status(400).send({error : "password is required"});
-    if (!validateEmail(email)) return res.status(400).send({error : "Email is invalid"});
-  
-    
-      const existingUser = await userSchema.findOne({ email });
-      if (existingUser) return res.status(400).send({error : "Email is already in use"});
-  
-      // Generate OTP
-      const otp = Math.floor(1000 + Math.random() * 9000);
-      const otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000)
-  
-      // Save user to DB
-      const userData = new userSchema({ fullName, email, password, avatar, otp , otpExpiredAt });
-      await userData.save();
-  
-      sendingEmail(email, "variefy your email", emailTemplates, otp, fullName)
-  
-  
-      return res.status(200).send({success : "Registration successful. OTP sent to your email."});
-  } catch (error) {
-      res.status(500).send("Server error!")
-  }
+    if (!fullName)
+      return res.status(400).send({ error: "fullName is required" });
+    if (!email) return res.status(400).send({ error: "email is required" });
+    if (!password)
+      return res.status(400).send({ error: "password is required" });
+    if (!validateEmail(email))
+      return res.status(400).send({ error: "Email is invalid" });
 
+    const existingUser = await userSchema.findOne({ email });
+    if (existingUser)
+      return res.status(400).send({ error: "Email is already in use" });
+
+    // Generate OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    // Save user to DB
+    const userData = new userSchema({
+      fullName,
+      email,
+      password,
+      avatar,
+      otp,
+      otpExpiredAt,
+    });
+    await userData.save();
+
+    sendingEmail(email, "variefy your email", emailTemplates, otp, fullName);
+
+    return res
+      .status(200)
+      .send({ success: "Registration successful. OTP sent to your email." });
+  } catch (error) {
+    res.status(500).send("Server error!");
+  }
 };
 
-//login function 
+//login function
 
 const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    const {email, password} = req.body;
+  if (!email) {
+    return res.status(400).send({ error: "email is required" });
+  }
 
-    if(!email) {
-        return res.status(400).send({error : "email is required"})
-    }
+  if (!validateEmail(email)) {
+    return res.status(400).send({ error: "email is not valid" });
+  }
 
-    if(!validateEmail(email)) {
-        return res.status(400).send({error : "email is not valid"})
-    }
+  if (!password) {
+    return res.status(400).send({ error: "password is required" });
+  }
 
-    if(!password) {
-        return res.status(400).send({error : "password is required"})
-    }
+  const existingUser = await userSchema.findOne({ email });
 
-    const existingUser = await userSchema.findOne({email})
-  
-    if(!existingUser) return res.status(400).send({error : "email not found"})
-        
-    if(!existingUser.isVarified) return res.status(400).send({error : "email not variefied"})
+  if (!existingUser) return res.status(400).send({ error: "email not found" });
 
-    const isUserValid = await existingUser.isPasswordValid(password);
+  if (!existingUser.isVarified)
+    return res.status(400).send({ error: "email not variefied" });
 
-    if(!isUserValid) {
-        return res.status(400).send({error : "password is incorrect"})
-    }
+  const isUserValid = await existingUser.isPasswordValid(password);
 
-   const acces_token = jwt.sign({
-        data: {
-            email : existingUser.email,
-            _id : existingUser._id
-        }
-      }, process.env.SECRET_KEY, { expiresIn: '24h' });
+  if (!isUserValid) {
+    return res.status(400).send({ error: "password is incorrect" });
+  }
 
-    const loggedUser = {
-        email : existingUser.email,
-        _id : existingUser._id,
-        fullName : existingUser.fullName,
-        avatar : existingUser.avatar,
-        isVarified : existingUser.isVarified,
-        createdAt : existingUser.createdAt,
-        updatedAt : existingUser.updatedAt
-    }
+  const acces_token = jwt.sign(
+    {
+      data: {
+        email: existingUser.email,
+        _id: existingUser._id,
+      },
+    },
+    process.env.SECRET_KEY,
+    { expiresIn: "24h" }
+  );
 
-    res.status(200).send({message: "login succesful", user : loggedUser, acces_token})
-}
+  const loggedUser = {
+    email: existingUser.email,
+    _id: existingUser._id,
+    fullName: existingUser.fullName,
+    bio: existingUser.bio,
+    avatar: existingUser.avatar,
+    isVarified: existingUser.isVarified,
+    createdAt: existingUser.createdAt,
+    updatedAt: existingUser.updatedAt,
+  };
+
+  res
+    .status(200)
+    .send({ message: "login succesful", user: loggedUser, acces_token });
+};
 
 //email variefied function
 
-const emailvariefied  = async (req, res) => {
+const emailvariefied = async (req, res) => {
+  const { email, otp } = req.body;
 
-    const {email, otp} = req.body; 
+  if (!email) return res.status(400).send({ error: "email is required" });
 
-    if (!email) return res.status(400).send({error : "email is required"});
+  if (!otp) return res.status(400).send({ error: "otp is required" });
 
-    if (!otp) return res.status(400).send({error : "otp is required"});
+  const variefiedUser = await userSchema.findOne({
+    email,
+    otp,
+    otpExpiredAt: { $gt: Date.now() },
+  });
 
-const variefiedUser  = await userSchema.findOne({email, otp, otpExpiredAt : {$gt:Date.now()}})
+  if (!variefiedUser)
+    return res.status(400).send({ error: "Wrong otp / expired !" });
 
-if(!variefiedUser ) return res.status(400).send({error : "Wrong otp / expired !"});
+  variefiedUser.otp = null;
+  variefiedUser.otpExpiredAt = null;
+  variefiedUser.isVarified = true;
+  await variefiedUser.save();
 
-variefiedUser.otp = null ;
-variefiedUser.otpExpiredAt = null ;
-variefiedUser.isVarified = true ;
-await variefiedUser.save() ;
-
-res.status(200).send({success : "Registration succesfull , email variefied succesfull"})
-
-}
+  res
+    .status(200)
+    .send({ success: "Registration succesfull , email variefied succesfull" });
+};
 
 //Re-Sent Otp
 
 const resentOtp = async (req, res) => {
-    try {
-      const {email} = req.body
+  try {
+    const { email } = req.body;
 
-      if(!email) {
-        return res.status(400).send({error : "email is required"})
-      }
+    if (!email) {
+      return res.status(400).send({ error: "email is required" });
+    }
 
-      const userData = await userSchema.findOne({email});
+    const userData = await userSchema.findOne({ email });
 
     if (!userData) {
-      return res.status(400).send({error : "No user data"})
+      return res.status(400).send({ error: "No user data" });
     }
 
     const otp = Math.floor(1000 + Math.random() * 9000);
 
-    userData.otp = otp
-    userData.otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000)
-    await userData.save()
+    userData.otp = otp;
+    userData.otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
+    await userData.save();
 
-    const fullName = userData.fullName
+    const fullName = userData.fullName;
 
-    sendingEmail(email, "variefy your email", emailTemplates, otp, fullName)
+    sendingEmail(email, "variefy your email", emailTemplates, otp, fullName);
 
-    return res.status(200).send({ message: 'OTP resent successfully' });
-
-     } catch (error) {
-       res.status(500).send({error : "server error"})
-     }
-
-
-}
+    return res.status(200).send({ message: "OTP resent successfully" });
+  } catch (error) {
+    res.status(500).send({ error: "server error" });
+  }
+};
 
 //forget password
 
 const forgotPassword = async (req, res) => {
-    const  {email}  = req.body;
-    if (!email) {
-        return res.status(400).json({ error: "Email is required" });
-    }
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
 
-    const existingUser = await userSchema.findOne({email})
+  const existingUser = await userSchema.findOne({ email });
 
-    if(!existingUser) return res.status(400).send({ error :"invalid credential"})
+  if (!existingUser)
+    return res.status(400).send({ error: "No account in this email" });
 
-    // initiate password reset logic 
+  // initiate password reset logic
 
-    const randomString = generateRandomString(25)
- 
-    existingUser.randomString = randomString;
-    existingUser.linkExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
-    await existingUser.save()
+  const randomString = generateRandomString(25);
 
-    sendingEmail(email, "Reset Your password", forgetPasswordTemplate, randomString, email )
+  existingUser.randomString = randomString;
+  existingUser.linkExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
+  await existingUser.save();
 
-    res.status(200).json({ message: "Password reset instructions sent to email" });
+  sendingEmail(
+    email,
+    "Reset Your password",
+    forgetPasswordTemplate,
+    randomString,
+    email
+  );
+
+  res
+    .status(200)
+    .json({ message: "Password reset instructions sent to email" });
 };
 
-//Reset password 
+//Reset password
 
 const resetPassword = async (req, res) => {
-try {
+  try {
     const randomString = req.params.randomString;
     const email = req.query.email;
-    const { password} = req.body;
+    const { password } = req.body;
 
-    if(!randomString) return res.status(400).send({ error :"invalid credential"})
-    if(!email) return res.status(400).send({ error :"invalid credential"})
+    if (!randomString)
+      return res.status(400).send({ error: "invalid credential" });
+    if (!email) return res.status(400).send({ error: "invalid credential" });
 
-    const existingUser = await userSchema.findOne({email})
+    const existingUser = await userSchema.findOne({ email });
 
-    if(!existingUser) return res.status(400).send({ error :"invalid credential"})
+    if (!existingUser)
+      return res.status(400).send({ error: "invalid credential" });
 
-    if(existingUser.randomString !== randomString || existingUser.linkExpiredAt < Date.now()) return res.status(400).send("invalid credential")
+    if (!existingUser.randomString || existingUser.randomString.trim() !== randomString.trim()) {
+      return res.status(400).send({ error: "Invalid token." });
+    }
 
-     existingUser.password = password ;
-     existingUser.randomString = null;
-     existingUser.linkExpiredAt = null;
-     await existingUser.save();
+    if (!existingUser.linkExpiredAt || new Date(existingUser.linkExpiredAt).getTime() < Date.now()) {
+      return res.status(400).send({ error: "Reset link has expired. Please request a new one." });
+    }
 
-     res.status(200).send({message : "password reset succesfull"})
-   } catch (error) {
-    res.status(500).send({error : "Server error!"})
-}
-}
+    existingUser.password = password;
+    existingUser.randomString = null;
+    existingUser.linkExpiredAt = null;
+    await existingUser.save();
 
-//update profile 
+    res.status(200).send({ message: "password reset succesfull" });
+  } catch (error) {
+    res.status(500).send({ error: "Server error!" });
+  }
+};
+
+//update profile
 
 const profileUpdate = async (req, res) => {
   try {
-    const { fullName, password } = req.body;
+    const { fullName, password, bio } = req.body;
     const updateFields = {};
 
-    if (fullName) updateFields.fullName = fullName.trim().split(/\s+/).join(' ');
-     if (password) {
+    if (fullName)
+      updateFields.fullName = fullName.trim().split(/\s+/).join(" ");
+     if (bio)
+      updateFields.bio = bio.trim().split(/\s+/).join(" ");
+    if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updateFields.password = hashedPassword;
     }
 
     const userId = req.user._id;
-     
+
     const user = await userSchema.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -257,14 +295,18 @@ const profileUpdate = async (req, res) => {
       message: "Profile updated successfully",
       updatedUser,
     });
-
   } catch (error) {
     console.error("Profile update error:", error);
     res.status(500).send("Server error!");
   }
 };
 
-
-
-
-module.exports = {registration, login, emailvariefied, forgotPassword, resetPassword, profileUpdate, resentOtp };
+module.exports = {
+  registration,
+  login,
+  emailvariefied,
+  forgotPassword,
+  resetPassword,
+  profileUpdate,
+  resentOtp,
+};

@@ -11,6 +11,7 @@ const userSchema = require("../modal/userSchema");
 const { generateRandomString } = require("../helpers/randomeString");
 const bcrypt = require("bcrypt");
 const { error } = require("console");
+const validatePassword = require("../helpers/validpassword");
 
 //registration function
 
@@ -25,8 +26,12 @@ const registration = async (req, res) => {
     if (!email) return res.status(400).send({ error: "email is required" });
     if (!password)
       return res.status(400).send({ error: "password is required" });
+
     if (!validateEmail(email))
       return res.status(400).send({ error: "Email is invalid" });
+
+    const passwordError = validatePassword(password);
+    if (passwordError) return res.status(400).send({ error: passwordError });
 
     const existingUser = await userSchema.findOne({ email });
     if (existingUser)
@@ -215,7 +220,6 @@ const resetPassword = async (req, res) => {
     const randomString = req.params.randomString;
     const email = req.query.email;
     const { password } = req.body;
-
     if (!randomString)
       return res.status(400).send({ error: "invalid credential" });
     if (!email) return res.status(400).send({ error: "invalid credential" });
@@ -225,12 +229,20 @@ const resetPassword = async (req, res) => {
     if (!existingUser)
       return res.status(400).send({ error: "invalid credential" });
 
-    if (!existingUser.randomString || existingUser.randomString.trim() !== randomString.trim()) {
+    if (
+      !existingUser.randomString ||
+      existingUser.randomString.trim() !== randomString.trim()
+    ) {
       return res.status(400).send({ error: "Invalid token." });
     }
 
-    if (!existingUser.linkExpiredAt || new Date(existingUser.linkExpiredAt).getTime() < Date.now()) {
-      return res.status(400).send({ error: "Reset link has expired. Please request a new one." });
+    if (
+      !existingUser.linkExpiredAt ||
+      new Date(existingUser.linkExpiredAt).getTime() < Date.now()
+    ) {
+      return res
+        .status(400)
+        .send({ error: "Reset link has expired. Please request a new one." });
     }
 
     existingUser.password = password;
@@ -253,8 +265,7 @@ const profileUpdate = async (req, res) => {
 
     if (fullName)
       updateFields.fullName = fullName.trim().split(/\s+/).join(" ");
-     if (bio)
-      updateFields.bio = bio.trim().split(/\s+/).join(" ");
+    if (bio) updateFields.bio = bio.trim().split(/\s+/).join(" ");
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updateFields.password = hashedPassword;

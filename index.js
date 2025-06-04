@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
   // User comes online
   socket.on("join_user", (userId) => {
     activeUsers.set(userId, socket.id);
-    console.log(`User ${userId} is now active`);
+    // console.log(`User ${userId} is now active`);
 
     // Send updated active user list to all clients
     io.emit("active_users", Array.from(activeUsers.keys()));
@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     for (const [userId, sockId] of activeUsers.entries()) {
       if (sockId === socket.id) {
         activeUsers.delete(userId);
-        console.log(`User ${userId} disconnected`);
+        // console.log(`User ${userId} disconnected`);
         break;
       }
     }

@@ -8,28 +8,30 @@ const { Server } = require('socket.io');
 
 const app = express();
 app.use(express.json());
-const FRONTEND_URL = FRONTEND_URL;
+
+// ✅ Correct frontend URL
+const FRONTEND_URL = 'https://chatbird-28dg.onrender.com';
+
+// ✅ Use updated CORS origin
 app.use(cors({
-  origin: 'https://chatbird-frontend.onrender.com', 
+  origin: FRONTEND_URL,
   credentials: true
 }));
 
 const httpServer = http.createServer(app);
 
-
 dbConnect();
 
-
+// ✅ Use same FRONTEND_URL in Socket.IO
 const io = new Server(httpServer, {
   cors: {
-    origin: FRONTEND_URL, 
+    origin: FRONTEND_URL,
     methods: ['GET', 'POST'],
     credentials: true
   }
 });
 
 global.io = io;
-
 
 const activeUsers = new Map(); 
 
@@ -68,3 +70,4 @@ const PORT = process.env.PORT || 8000;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
+

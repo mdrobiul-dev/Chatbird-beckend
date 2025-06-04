@@ -1,5 +1,5 @@
 const express = require('express');
-const { registration, emailvariefied, forgotPassword, resetPassword, profileUpdate, login, resentOtp } = require('../../controllers/authcontroller');
+const { registration, emailvariefied, forgotPassword, resetPassword, profileUpdate, login, resentOtp } = require('../../controllers/authController');
 
 const validUser = require('../../middlewears/authMiddlewear');
 const upload = require('../../middlewears/multer');

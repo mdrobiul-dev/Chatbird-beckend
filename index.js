@@ -8,7 +8,7 @@ const { Server } = require('socket.io');
 
 const app = express();
 app.use(express.json());
-
+const FRONTEND_URL = FRONTEND_URL;
 app.use(cors({
   origin: 'https://chatbird-frontend.onrender.com', 
   credentials: true
@@ -22,7 +22,7 @@ dbConnect();
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'https://chatbird-frontend.onrender.com', 
+    origin: FRONTEND_URL, 
     methods: ['GET', 'POST'],
     credentials: true
   }

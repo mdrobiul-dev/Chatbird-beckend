@@ -321,4 +321,3 @@ module.exports = {
   profileUpdate,
   resentOtp,
 };
-     

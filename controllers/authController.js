@@ -320,4 +320,4 @@ module.exports = {
   resetPassword,
   profileUpdate,
   resentOtp,
-};
+};       

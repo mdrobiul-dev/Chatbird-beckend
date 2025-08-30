@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 // ✅ Correct frontend URL
-const FRONTEND_URL = 'https://chatbird-frontend.onrender.com/';
+const FRONTEND_URL = 'https://chatbird-frontend.onrender.com';
 
 // ✅ Use updated CORS origin
 app.use(cors({

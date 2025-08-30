@@ -10,7 +10,6 @@ const {
 const userSchema = require("../modal/userSchema");
 const { generateRandomString } = require("../helpers/randomeString");
 const bcrypt = require("bcrypt");
-const { error } = require("console");
 const validatePassword = require("../helpers/validpassword");
 
 //registration function

@@ -9,12 +9,23 @@ const { Server } = require('socket.io');
 const app = express();
 app.use(express.json());
 
-// ✅ Correct frontend URL
-const FRONTEND_URL = 'https://chatbird-frontend.onrender.com';
+// Define allowed origins
+const allowedOrigins = [
+  'https://chatbird-frontend.onrender.com',
+  'http://localhost:5173' // Add local development URL
+];
 
-// ✅ Use updated CORS origin
+// Use CORS with dynamic origin
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -22,10 +33,16 @@ const httpServer = http.createServer(app);
 
 dbConnect();
 
-// ✅ Use same FRONTEND_URL in Socket.IO
+// Configure Socket.IO with the same CORS settings
 const io = new Server(httpServer, {
   cors: {
-    origin: FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -33,7 +50,7 @@ const io = new Server(httpServer, {
 
 global.io = io;
 
-const activeUsers = new Map(); 
+const activeUsers = new Map();
 
 io.on("connection", (socket) => {
   socket.on("join_room", (conversationId) => {
@@ -69,4 +86,4 @@ app.use(router);
 const PORT = process.env.PORT || 8000;
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
-});                       
+});                     
